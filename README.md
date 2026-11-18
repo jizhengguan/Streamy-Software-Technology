@@ -62,3 +62,13 @@ flowchart TD
     classDef decisionStyle fill:#f9f,stroke:#333,stroke-width:2px;
     class E decisionStyle
 ```
+## Native Mermaid Rendering Test
+
+This section verifies that GitHub natively renders Mermaid code blocks.
+
+```mermaid
+flowchart LR
+  Client[Web Client] -->|HTTPS| API[API Gateway]
+  API --> Service[Listing Service]
+  Service --> DB[(Database)]
+```
