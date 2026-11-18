@@ -14,18 +14,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Mermaid CLI and Chrome Dependencies
+        run: |
+          npm install -g @mermaid-js/mermaid-cli
+          npx puppeteer browsers install chrome
 
       - name: Generate Diagrams In Markdown Files
         run: |
           cd docs
           for file in $(find . -name '*.md'); do
             [ -f "$file" ] || continue
-            npx -p @mermaid-js/mermaid-cli mmdc --input "$file" --output "$file"
+            mmdc --input "$file" --output "$file" --puppeteerConfigFile <(echo '{"args": ["--no-sandbox"]}')
           done
 
       - name: Setup Pages
-        uses: actions/configure-pages@v2
+        uses: actions/configure-pages@v5
 
       - name: Build with Jekyll
         uses: actions/jekyll-build-pages@v1
@@ -34,7 +44,7 @@ jobs:
           destination: ./_site
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v3
 
   deploy:
     environment:
@@ -45,4 +55,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v4
